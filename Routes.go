@@ -33,13 +33,19 @@ var routes = Routes{
 	Route{
 		"Index",
 		"GET",
-		"/",
+		"/api",
 		Index,
 	},
 	Route{
 		"Get page",
 		"GET",
-		"/page/{pageId}",
+		"/api/page/{pageId}",
 		PageResource,
+	},
+	Route{
+		"Get page",
+		"GET",
+		"/api/contacts",
+		ContactsResource,
 	},
 }
