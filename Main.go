@@ -1,16 +1,15 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
+	"fmt"
 )
 
+const GOPORT string = "8080"
+
 func main() {
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, world!")
-	})
-
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	router := NewRouter()
+	fmt.Println("Ready, listening on", GOPORT,"...")
+	log.Fatal(http.ListenAndServe(":"+GOPORT, router))
 }
