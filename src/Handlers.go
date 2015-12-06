@@ -16,7 +16,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func PageResource(w http.ResponseWriter, r *http.Request) {
 
-	var db *sql.DB = ConnectDB()
+	db := ConnectDB()
 	defer db.Close()
 
 	vars := mux.Vars(r)
@@ -41,12 +41,12 @@ func PageResource(w http.ResponseWriter, r *http.Request) {
 
 func ContactsResource(w http.ResponseWriter, r *http.Request) {
 
-	var db *sql.DB = ConnectDB()
+	db := ConnectDB()
 	defer db.Close()
 
-	var queryParamsMap map[string][]string = r.URL.Query()
-	var contactType = queryParamsMap["type"]
-	var rows = QueryContact(db, contactType)
+	queryParamsMap := r.URL.Query()
+	contactType := queryParamsMap["type"]
+	rows := QueryContact(db, contactType)
 	var response Contacts
 
 	for rows.Next() {
@@ -79,12 +79,11 @@ func QueryContact(db *sql.DB, contactType []string) *sql.Rows {
 			panic(err.Error()) // TODO proper error handling instead of panic in your app
 		}
 		return rows
-	} else {
-		//	Execute query
-		rows, err := db.Query("SELECT * FROM contact")
-		if err != nil {
-			log.Fatal(err)
-		}
-		return rows
 	}
+	//	Execute query
+	rows, err := db.Query("SELECT * FROM contact")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return rows
 }
