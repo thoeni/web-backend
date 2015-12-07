@@ -60,4 +60,16 @@ var routes = Routes{
 		"/api/testimonial/{name}",
 		TestimonialResource,
 	},
+	Route{
+		"Get projects",
+		"GET",
+		"/api/project",
+		AllProjectResource,
+	},
+	Route{
+		"Get specific project",
+		"GET",
+		"/api/project/{name}",
+		ProjectResource,
+	},
 }

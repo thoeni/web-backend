@@ -147,3 +147,63 @@ func TestimonialResource(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 }
+
+func AllProjectResource(w http.ResponseWriter, r *http.Request) {
+
+	db := ConnectDB()
+	defer db.Close()
+
+	//	Execute query
+	rows, err := db.Query("SELECT * FROM project")
+	if err != nil {
+		log.Fatal(err)
+	}
+	var response Projects
+
+	for rows.Next() {
+		var project Project
+		err := rows.Scan(&project.Name, &project.Text, &project.Tech)
+		if err != nil {
+			log.Fatal(err)
+		}
+		response = append(response, project)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		panic(err)
+	}
+}
+
+func ProjectResource(w http.ResponseWriter, r *http.Request) {
+
+	db := ConnectDB()
+	defer db.Close()
+
+	vars := mux.Vars(r)
+	name := vars["name"]
+	var response Projects
+
+	// Prepare statement for reading data
+	stmtOut, err := db.Prepare("SELECT * FROM project where name = ?")
+	if err != nil {
+		panic(err.Error()) // TODO proper error handling instead of panic in your app
+	}
+	defer stmtOut.Close()
+
+	var project Project
+	//	Execute query
+	err = stmtOut.QueryRow(name).Scan(&project.Name, &project.Text, &project.Tech)
+	if err != nil {
+		panic(err.Error()) // TODO proper error handling instead of panic in your app
+	}
+
+	response = append(response, project)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		panic(err)
+	}
+}
