@@ -9,6 +9,5 @@ RUN go-wrapper install
 
 EXPOSE  8080
 
-# this will ideally be built by the ONBUILD below ;)
 CMD ["go-wrapper", "run"]
 

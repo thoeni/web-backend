@@ -20,7 +20,7 @@ func PageResource(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	vars := mux.Vars(r)
-	surveyId := vars["pageId"]
+	pageId := vars["pageId"]
 
 	// Prepare statement for reading data
 	stmtOut, err := db.Prepare("SELECT * FROM page WHERE id = ?")
@@ -30,7 +30,7 @@ func PageResource(w http.ResponseWriter, r *http.Request) {
 	defer stmtOut.Close()
 
 	var response Page
-	err = stmtOut.QueryRow(surveyId).Scan(&response.Id, &response.Title, &response.Summary, &response.Content)
+	err = stmtOut.QueryRow(pageId).Scan(&response.Id, &response.Title, &response.Summary, &response.Content)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -86,4 +86,64 @@ func QueryContact(db *sql.DB, contactType []string) *sql.Rows {
 		log.Fatal(err)
 	}
 	return rows
+}
+
+func AllTestimonialResource(w http.ResponseWriter, r *http.Request) {
+
+	db := ConnectDB()
+	defer db.Close()
+
+	//	Execute query
+	rows, err := db.Query("SELECT * FROM testimonial")
+	if err != nil {
+		log.Fatal(err)
+	}
+	var response Testimonials
+
+	for rows.Next() {
+		var testimonial Testimonial
+		err := rows.Scan(&testimonial.Name, &testimonial.Text, &testimonial.Date)
+		if err != nil {
+			log.Fatal(err)
+		}
+		response = append(response, testimonial)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		panic(err)
+	}
+}
+
+func TestimonialResource(w http.ResponseWriter, r *http.Request) {
+
+	db := ConnectDB()
+	defer db.Close()
+
+	vars := mux.Vars(r)
+	name := vars["name"]
+	var response Testimonials
+
+	// Prepare statement for reading data
+	stmtOut, err := db.Prepare("SELECT * FROM testimonial where name = ?")
+	if err != nil {
+		panic(err.Error()) // TODO proper error handling instead of panic in your app
+	}
+	defer stmtOut.Close()
+
+	var testimonial Testimonial
+	//	Execute query
+	err = stmtOut.QueryRow(name).Scan(&testimonial.Name, &testimonial.Text, &testimonial.Date)
+	if err != nil {
+		panic(err.Error()) // TODO proper error handling instead of panic in your app
+	}
+
+	response = append(response, testimonial)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		panic(err)
+	}
 }

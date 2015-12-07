@@ -48,4 +48,16 @@ var routes = Routes{
 		"/api/contacts",
 		ContactsResource,
 	},
+	Route{
+		"Get testimonials",
+		"GET",
+		"/api/testimonial",
+		AllTestimonialResource,
+	},
+	Route{
+		"Get specific testimonial",
+		"GET",
+		"/api/testimonial/{name}",
+		TestimonialResource,
+	},
 }
