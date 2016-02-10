@@ -1,13 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"github.com/gorilla/mux"
 	_ "github.com/go-sql-driver/mysql"
-	"database/sql"
+	"github.com/gorilla/mux"
 	"log"
+	"net/http"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +66,7 @@ func ContactsResource(w http.ResponseWriter, r *http.Request) {
 }
 
 func QueryContact(db *sql.DB, contactType []string) *sql.Rows {
-	if (contactType != nil) {
+	if contactType != nil {
 		// Prepare statement for reading data
 		stmtOut, err := db.Prepare("SELECT * FROM contact where type = ?")
 		if err != nil {
